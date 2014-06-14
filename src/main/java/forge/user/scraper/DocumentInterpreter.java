@@ -12,6 +12,7 @@ public abstract class DocumentInterpreter  extends NodeInterpreter {
 	    Tidy t = new Tidy();
 	    t.setShowWarnings(false);
 	    t.setQuiet(true);
+	    t.setCharEncoding(org.w3c.tidy.Configuration.UTF8);
 	    Document document = t.parseDOM(is, null);
 	    
 	    NodeList nl = document.getChildNodes();

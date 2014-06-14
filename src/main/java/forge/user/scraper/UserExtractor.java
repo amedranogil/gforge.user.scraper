@@ -100,7 +100,7 @@ public class UserExtractor implements LinkListener {
     public void toFile(String filename) {
 
 	try {
-	    PrintStream ps = new PrintStream(new File(filename));
+	    PrintStream ps = new PrintStream(new File(filename), "UTF-8");
 	    for (User u : visited.values()) {
 		ps.println(u.login + " = " + u.uName + " <"
 			+ u.email.replace(" @nospam@ ", "@") + ">");
