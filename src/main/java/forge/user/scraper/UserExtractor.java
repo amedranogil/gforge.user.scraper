@@ -3,6 +3,8 @@ package forge.user.scraper;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -80,6 +82,7 @@ public class UserExtractor implements LinkListener {
 
     private HttpClient client;
     private Map<String, User> visited;
+    private List<Thread> threads;
 
     /**
      * @param client
@@ -88,17 +91,35 @@ public class UserExtractor implements LinkListener {
 	super();
 	this.client = client;
 	visited = new TreeMap<String, UserExtractor.User>();
+	threads = new ArrayList<Thread>();
     }
 
-    public void LinkFound(String link) {
+    public void LinkFound(final String link) {
 	if (!visited.containsKey(link)) {
-	    // System.out.println("user: " + link);
-	    visited.put(link, new UserInterpreter().getUser(link));
+	    Thread t = new Thread(new Runnable() {
+	        
+	        public void run() {
+	            User u = new UserInterpreter().getUser(link);
+	            synchronized (visited) {
+			visited.put(link, u);
+		    }
+	        }
+	    }, link);
+	    t.start();
+	    threads.add(t);
 	}
     }
 
     public void toFile(String filename) {
-
+	
+	for (Thread t : threads) {
+	    try {
+		t.join();
+	    } catch (InterruptedException e) {
+		e.printStackTrace();
+	    }
+	}
+	
 	try {
 	    PrintStream ps = new PrintStream(new File(filename), "UTF-8");
 	    for (User u : visited.values()) {
@@ -107,7 +128,6 @@ public class UserExtractor implements LinkListener {
 	    }
 	    ps.close();
 	} catch (IOException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
 
