@@ -27,7 +27,7 @@ public class Crawler {
 	    LinkListener perProject = new  ProjectExplorer(c, perUser);
 	    
 	    LinkExplorer le = new LinkExplorer(c, new URL(
-		    "http://forge.universaal.org/gf/project/"),
+		    args[0] + "project/"),
 		    "/gf/project/\\w*/$", perProject);
 	    le.explore();
 
