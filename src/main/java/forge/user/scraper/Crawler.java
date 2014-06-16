@@ -16,10 +16,30 @@ public class Crawler {
      */
     public static void main(String[] args) {
 	try {
+		
+		String url;
+		String username;
+		String password;
+		String output = "users.txt";
+		if (args.length >= 4){
+			output = args[3];
+		}
+		if (args.length >= 3) {
+			url = args[0];
+			username = args[1];
+			password = args[2];
+		}
+		else {
+			System.out.println("Usage: Crawler http://server/gforge username password [outputfile]");
+			return;
+		}
+			
+	
+		
 	    HttpClient c = new DefaultHttpClient();
 	    URL li = new URL(
-		    args[0] + "account/?action=Login&redirect=%2Fgf%2F%3F");
-	    SignIn s = new SignIn(c, li, args[1], args[2]);
+		    url + "account/?action=Login&redirect=%2Fgf%2F%3F");
+	    SignIn s = new SignIn(c, li, username, password);
 	    s.login();
 
 	    UserExtractor perUser = new UserExtractor(c);
@@ -27,11 +47,11 @@ public class Crawler {
 	    LinkListener perProject = new  ProjectExplorer(c, perUser);
 	    
 	    LinkExplorer le = new LinkExplorer(c, new URL(
-		    args[0] + "project/"),
+		    url + "project/"),
 		    "/gf/project/\\w*/$", perProject);
 	    le.explore();
 
-	    perUser.toFile("users.txt");
+	    perUser.toFile(output);
 	} catch (MalformedURLException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
