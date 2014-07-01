@@ -36,7 +36,7 @@ public class ProjectExplorer implements LinkListener {
 
     public void explore(String link){
 	try {
-	    LinkExplorer le = new LinkExplorer(client, new URL(link), "/gf/user/\\w*/$", userLinkListener);
+	    LinkExplorer le = new LinkExplorer(client, new URL(link), "/gf/user/(\\w|\\.)*/$", userLinkListener);
 	    le.explore();
 	} catch (MalformedURLException e) {
 	    // TODO Auto-generated catch block
